@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b3d27">
+<title>SIPN – Sistem Informasi Pagar Nusa (Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+--g950:#062a1b;--g900:#0b3d27;--g800:#0e4d32;--g700:#126440;--g600:#178050;--g500:#1f9a62;--g100:#e3f3ea;--g50:#f1f8f4;
+--gold:#c99a1e;--gold600:#9a7510;--gold100:#fbf1d3;
+--bg:#f3f5f4;--card:#fff;--text:#14211a;--muted:#62726a;--line:#e2e8e4;
+--red:#c43d32;--red100:#fdeceb;--blue:#2563eb;--blue100:#e7effe;--gray100:#eef1ef;
+--shadow:0 1px 2px rgba(10,40,25,.05),0 4px 16px rgba(10,40,25,.06);--r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{letter-spacing:-.2px}
+.app{display:grid;grid-template-columns:252px 1fr;min-height:100vh}
+/* sidebar */
+.side{background:linear-gradient(180deg,var(--g900),var(--g950));color:#dfeee6;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:18px 14px}
+.brand{display:flex;gap:11px;align-items:center;padding:4px 6px 18px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:14px}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e8c25a);display:grid;place-items:center;color:var(--g950);flex:none}
+.logo.sm{width:32px;height:32px;border-radius:9px}
+.brand b{display:block;color:#fff;font-size:15px}
+.brand small{color:#a9c9b8;font-size:12px}
+.nav{display:flex;flex-direction:column;gap:3px;flex:1;overflow:auto}
+.nav .grp{font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;color:#7fa792;padding:10px 12px 4px;font-weight:600}
+.nav button{display:flex;align-items:center;gap:11px;background:none;border:0;color:#cfe3d8;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left;font-weight:500}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav button.on{background:rgba(201,154,30,.16);color:#fff;box-shadow:inset 3px 0 0 var(--gold)}
+.nav button.on svg{color:var(--gold)}
+.side-foot{border-top:1px solid rgba(255,255,255,.08);padding-top:12px;font-size:12px;color:#a9c9b8}
+.who{display:flex;gap:10px;align-items:center;margin-top:8px}
+.who b{color:#fff;display:block;font-size:13px}
+.av{width:36px;height:36px;border-radius:50%;background:var(--g100);color:var(--g700);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.side .av{background:rgba(255,255,255,.12);color:#fff}
+.av.lg{width:58px;height:58px;font-size:20px}
+.av.xl{width:64px;height:64px;font-size:22px;background:rgba(255,255,255,.15);color:#fff;border:2px solid var(--gold)}
+/* main */
+main{min-width:0;padding:22px 28px 40px}
+.mtop{display:none}
+.top{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.top h1{font-size:23px;margin:0}
+.top .sub{color:var(--muted);font-size:13px}
+.ctl{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.sel{display:flex;flex-direction:column;gap:3px}
+.sel label{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+select,input,textarea{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;outline:none;min-width:0}
+select:focus,input:focus,textarea:focus{border-color:var(--g500);box-shadow:0 0 0 3px var(--g100)}
+/* cards & grid */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;min-width:0}
+.card h3{margin:0;font-size:15px}
+.hint{color:var(--muted);font-size:12.5px}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px}
+.kpi-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.kl{color:var(--muted);font-weight:600;font-size:13px}
+.kt{width:38px;height:38px;border-radius:11px;display:grid;place-items:center}
+.t-g{background:var(--g100);color:var(--g700)}.t-gold{background:var(--gold100);color:var(--gold600)}.t-b{background:var(--blue100);color:var(--blue)}.t-r{background:var(--red100);color:var(--red)}
+.kv{font-size:26px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
+.ks{color:var(--muted);font-size:12.5px;margin-top:3px}
+.g2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.g2e{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.chart{width:100%;height:auto;display:block}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 34px;gap:10px;align-items:center;font-size:13px}
+.bl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.bt{height:10px;background:var(--gray100);border-radius:99px;overflow:hidden}
+.bf{height:100%;background:linear-gradient(90deg,var(--g600),var(--g500));border-radius:99px}
+.bar-row b{text-align:right}
+.donut-wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.mini-list{display:flex;flex-direction:column;gap:9px;flex:1;min-width:160px}
+.mini-list div{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.mini-list span{color:var(--muted)}
+.stackbar{display:flex;height:14px;border-radius:99px;overflow:hidden;margin:6px 0 12px}
+.lg-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:12.5px}
+.lg-grid i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;border:1px solid rgba(0,0,0,.08)}
+/* table */
+.tbl-wrap{overflow-x:auto;border-radius:12px}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}
+.tbl th{background:var(--g800);color:#fff;text-align:left;font-weight:600;padding:10px 12px;white-space:nowrap;font-size:12.5px}
+.tbl th:first-child{border-top-left-radius:10px}.tbl th:last-child{border-top-right-radius:10px}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tbody tr:hover td{background:var(--g50)}
+.tbl .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tbl tr.total td{font-weight:800;background:var(--g50);border-top:2px solid var(--g700);border-bottom:0}
+.namecell{display:flex;gap:10px;align-items:center}
+.namecell .av{width:32px;height:32px;font-size:12px}
+.namecell small{display:block;color:var(--muted);font-size:12px}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-green{background:var(--g100);color:var(--g700)}.p-gold{background:var(--gold100);color:var(--gold600)}.p-red{background:var(--red100);color:var(--red)}.p-blue{background:var(--blue100);color:var(--blue)}.p-gray{background:var(--gray100);color:var(--muted)}
+.belt{display:inline-flex;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid rgba(0,0,0,.06)}
+.in{color:var(--g700);font-weight:600}.out{color:var(--red);font-weight:600}
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:10px;padding:9px 14px;font-weight:600;cursor:pointer;background:var(--g700);color:#fff;white-space:nowrap}
+.btn:hover{background:var(--g800)}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{background:var(--g50)}
+.btn.gold{background:var(--gold);color:var(--g950)}
+.btn.sm{padding:6px 10px;font-size:12.5px;border-radius:8px}
+.link{background:none;border:0;color:var(--g700);font-weight:600;cursor:pointer;padding:0}
+.tabs{display:flex;gap:4px;background:#e6ebe8;padding:4px;border-radius:12px;width:max-content;max-width:100%;overflow-x:auto;margin-bottom:16px}
+.tabs button{border:0;background:none;padding:8px 14px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button.on{background:#fff;color:var(--g800);box-shadow:var(--shadow)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search{position:relative;flex:1;min-width:200px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{width:100%;padding-left:36px}
+/* agenda */
+.agenda{display:flex;flex-direction:column;gap:10px}
+.ag{display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;border:1px solid var(--line)}
+.ag-d{width:50px;flex:none;text-align:center;border-radius:10px;background:var(--g800);color:#fff;padding:6px 0;line-height:1.1}
+.ag-d b{display:block;font-size:18px}.ag-d small{font-size:11px;color:var(--gold100);text-transform:uppercase}
+.ag-t{flex:1;min-width:0}.ag-t b{display:block;font-size:13.5px}
+/* struktur */
+.levels{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lv{padding:7px 13px;border-radius:99px;border:1.5px dashed #c9d3cd;color:var(--muted);font-weight:600;font-size:12.5px;background:#fff}
+.lv.on{background:var(--g700);color:#fff;border:1.5px solid var(--g700)}
+.lv.next{border-color:var(--gold);color:var(--gold600)}
+.arrow{color:#b5c2bb}
+.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.person{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:12px}
+.person small{display:block;color:var(--muted);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.person b{font-size:13.5px}
+.person.lead{background:linear-gradient(135deg,var(--g800),var(--g700));border:0;color:#fff}
+.person.lead small{color:var(--gold100)}.person.lead .av{background:var(--gold);color:var(--g950)}
+details.pac{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+details.pac summary{list-style:none;cursor:pointer;padding:13px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+details.pac summary::-webkit-details-marker{display:none}
+details.pac[open] summary{background:var(--g50);border-bottom:1px solid var(--line)}
+.pac-ic{width:36px;height:36px;border-radius:10px;background:var(--gold100);color:var(--gold600);display:grid;place-items:center;flex:none}
+.pac-t{flex:1;min-width:140px}.pac-t b{display:block}
+.pac-n{display:flex;gap:16px;font-size:12.5px;color:var(--muted)}
+.pac-n b{color:var(--text);font-size:14px;display:block}
+details.pac .tbl-wrap{border-radius:0}
+details.pac .tbl th{background:var(--g100);color:var(--g800);border-radius:0!important}
+/* program */
+.prog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.prog{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff;display:flex;flex-direction:column;gap:10px}
+.prog h4{margin:0;font-size:14.5px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
+.meta span{display:inline-flex;gap:5px;align-items:center}
+.progress{height:8px;background:var(--gray100);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--g600);border-radius:99px}
+.progress.gold i{background:var(--gold)}
+.money{display:flex;justify-content:space-between;font-size:12.5px;border-top:1px dashed var(--line);padding-top:9px}
+.money b{display:block;font-size:13.5px}
+.tl{position:relative;padding-left:22px}
+.tl:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-m{font-weight:700;color:var(--g700);margin:14px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.tl-m:first-child{margin-top:0}
+.tl-i{position:relative;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff}
+.tl-i:before{content:"";position:absolute;left:-20px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--g600);box-shadow:0 0 0 3px #fff}
+.tl-i.Rencana:before{background:var(--gold)}
+/* absensi */
+.att{display:flex;flex-direction:column;max-height:470px;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.att-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line)}
+.att-row:last-child{border-bottom:0}
+.att-row .namecell{flex:1;min-width:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex:none}
+.seg button{border:0;background:#fff;width:34px;height:30px;font-weight:700;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.H.on{background:var(--g600);color:#fff}.seg button.I.on{background:var(--gold);color:#fff}.seg button.A.on{background:var(--red);color:#fff}
+.att-sum{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.dots{display:flex;gap:4px}
+.dot{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:10px;font-weight:700}
+.dot.y{background:var(--g100);color:var(--g700)}.dot.n{background:var(--red100);color:var(--red)}
+/* backup */
+.act-card{display:flex;flex-direction:column;gap:10px}
+.act-card .kt{width:44px;height:44px}
+.note{background:var(--gold100);border:1px solid #f0dfa8;color:#6b520c;border-radius:12px;padding:12px 14px;font-size:13px;display:flex;gap:10px}
+.note svg{flex:none;margin-top:1px}
+.countlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.countlist div{background:var(--g50);border-radius:10px;padding:10px 12px}
+.countlist b{display:block;font-size:20px}
+.countlist span{color:var(--muted);font-size:12px}
+/* siswa */
+.idcard{border-radius:18px;padding:18px;color:#fff;background:radial-gradient(circle at 90% 0%,rgba(201,154,30,.35),transparent 45%),linear-gradient(135deg,var(--g800),var(--g950));box-shadow:0 10px 30px rgba(6,42,27,.25);position:relative;overflow:hidden;max-width:440px}
+.idcard:after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--gold),#ecd27c,var(--gold))}
+.idc-top{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+.idc-top b{display:block;letter-spacing:1.5px;font-size:13px}.idc-top small{color:#bcd8c9;font-size:11.5px}
+.idc-body{display:flex;gap:14px;align-items:center}
+.idc-name{font-size:18px;font-weight:800}
+.idc-body div div{font-size:12.5px;color:#cfe3d8}
+.idc-foot{display:flex;justify-content:space-between;margin-top:18px;font-size:12px;color:#e9d9a4;font-weight:600}
+.steps{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.step{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--muted);width:66px;text-align:center}
+.step i{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:12px}
+.step.done i{border-color:transparent}
+.step.cur i{box-shadow:0 0 0 3px var(--gold)}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin:14px 0}
+.dl div span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.dl div b{font-weight:600}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.mo{text-align:center;border-radius:10px;padding:8px 4px;font-size:12px;font-weight:600}
+.mo.y{background:var(--g100);color:var(--g700)}.mo.n{background:var(--red100);color:var(--red)}
+.mo small{display:block;font-weight:500;font-size:10.5px;opacity:.8}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(6,30,19,.45);display:none;align-items:center;justify-content:center;z-index:60;padding:16px}
+.ov.show{display:flex}
+.modal{background:#fff;border-radius:18px;width:min(580px,100%);max-height:90vh;overflow:auto;padding:20px;animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.mh{display:flex;gap:14px;align-items:flex-start;margin-bottom:6px}
+.mh h2{margin:0;font-size:18px}
+.mh>div:nth-child(2),.mh>div:first-child:not(.av){flex:1}
+.x{margin-left:auto;border:0;background:var(--gray100);width:34px;height:34px;border-radius:10px;cursor:pointer;display:grid;place-items:center;flex:none}
+.modal h4{margin:16px 0 8px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.fg .full{grid-column:1/-1}
+.fld label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.fld input,.fld select{width:100%}
+.rh{display:flex;flex-direction:column;gap:8px}
+.rh div{display:flex;gap:10px;align-items:center;font-size:13px}
+.rh i{width:8px;height:8px;border-radius:50%;background:var(--g600);flex:none}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--g950);color:#fff;padding:11px 18px;border-radius:12px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:80;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.bnav{display:none}
+.empty{text-align:center;color:var(--muted);padding:28px}
+.flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+/* responsive */
+@media (max-width:1180px){.kpis{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}}
+@media (max-width:900px){
+ .app{grid-template-columns:1fr}
+ .side{display:none}
+ main{padding:0 0 92px}
+ .mtop{display:flex;gap:10px;align-items:center;position:sticky;top:0;z-index:40;background:var(--g900);color:#fff;padding:12px 16px}
+ .mtop b{display:block;font-size:14px}.mtop small{color:#a9c9b8;font-size:11.5px}
+ .top{padding:16px 16px 0}
+ .top h1{font-size:20px}
+ .ctl{margin-left:0;width:100%}
+ .ctl .sel{flex:1;min-width:140px}
+ .content{padding:0 16px}
+ .g2e{grid-template-columns:1fr}
+ .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);overflow-x:auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:50;gap:2px;box-shadow:0 -4px 16px rgba(10,40,25,.06)}
+ .bnav button{flex:1 0 70px;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;font-size:10.5px;font-weight:600;color:var(--muted);padding:7px 4px;border-radius:10px;cursor:pointer;white-space:nowrap}
+ .bnav button.on{color:var(--g700);background:var(--g50)}
+ .ov{align-items:flex-end;padding:0}
+ .modal{border-radius:20px 20px 0 0;max-height:92vh}
+ .toast{bottom:96px}
+}
+@media (max-width:640px){
+ .kpis{gap:10px}
+ .kpi{padding:13px}
+ .kv{font-size:21px}
+ .kt{width:32px;height:32px}
+ .fg,.dl{grid-template-columns:1fr}
+ .months{grid-template-columns:repeat(3,1fr)}
+ .tbl.cardify thead{display:none}
+ .tbl.cardify,.tbl.cardify tbody{display:block}
+ .tbl.cardify tr{display:block;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:8px 12px;background:#fff}
+ .tbl.cardify td{display:flex;justify-content:space-between;align-items:center;gap:12px;border:0;padding:5px 0;text-align:right}
+ .tbl.cardify td:before{content:attr(data-l);color:var(--muted);font-size:12px;font-weight:600;text-align:left}
+ .tbl.cardify td.nl:before{display:none}
+ .tbl.cardify td.nl{text-align:left}
+ .tbl.cardify tbody tr:hover td{background:none}
+ .tbl.cardify tr.total{background:var(--g50);border:1.5px solid var(--g700)}
+ .tbl.cardify tr.total td{background:none;border:0}
+ .bar-row{grid-template-columns:90px 1fr 30px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="side">
+  <div class="brand"><div class="logo" id="lg1"></div><div><b>SIPN</b><small>PC Pagar Nusa Kab. Mimika</small></div></div>
+  <nav class="nav" id="nav"></nav>
+  <div class="side-foot" id="sidefoot"></div>
+ </aside>
+ <main>
+  <div class="mtop"><div class="logo sm" id="lg2"></div><div><b>SIPN Pagar Nusa</b><small>PC Kabupaten Mimika</small></div></div>
+  <div class="top" id="top"></div>
+  <div class="content" id="content"></div>
+ </main>
+</div>
+<nav class="bnav" id="bnav"></nav>
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="imp" accept=".json,application/json" hidden>
+
+<script>
+/* ================= UTIL ================= */
+const $=s=>document.querySelector(s);
+let seed=11;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const rp=n=>'Rp '+Math.round(n).toLocaleString('id-ID');
+const short=n=>{const a=Math.abs(n);return a>=1e6?(n/1e6).toFixed(1).replace('.',',')+' jt':Math.round(n/1e3)+' rb'};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ini=n=>n.replace(/[^A-Za-z ]/g,'').split(' ').filter(w=>w.length>1).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const BLN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const BLNF=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const fdate=d=>{if(!d||d==='—')return '—';const [y,m,dd]=d.split('-');return +dd+' '+BLN[+m-1]+' '+y};
+const ICON={
+home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+tree:'<rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="17" width="6" height="5" rx="1"/><rect x="16" y="17" width="6" height="5" rx="1"/><path d="M12 7v5M5 17v-3h14v3"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.8.7 3 2.5 3.5 5.2"/>',
+wallet:'<rect x="2.5" y="6" width="19" height="14" rx="2"/><path d="M2.5 10h19M16 15h2M6 6V4.5h11V6"/>',
+target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+check:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8.5 14.5l2.5 2.5 4.5-5"/>',
+mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+db:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/>',
+cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>',
+down:'<path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v3h16v-3"/>',up:'<path d="M12 15V3m0 0L8 7m4-4 4 4M4 17v3h16v-3"/>',
+shield:'<path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="m12 7 1.5 3 3.3.5-2.4 2.3.6 3.2L12 14.5 9 16l.6-3.2-2.4-2.3 3.3-.5z"/>',
+alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+pin:'<path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+file:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+inbox:'<path d="M3 13h5l2 3h4l2-3h5"/><path d="M5 5h14l2 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6z"/>',
+send:'<path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+card:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.4 1.7-2 3-2s2.4.6 3 2M14 10h4M14 13h3"/>'
+};
+const ic=(n,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[n]||''}</svg>`;
+
+/* ================= DATA CONTOH ================= */
+const ORG={nama:'Pimpinan Cabang Pagar Nusa',wilayah:'Kabupaten Mimika',periode:'2025 – 2030',induk:'PW Pagar Nusa Papua Tengah · Banom PCNU Mimika',padepokan:'Padepokan Soponyono, Masjid An-Nur SP4 Wonosari Jaya, Distrik Wania'};
+const MB=['Mei','Jun','Jul','Agu','Sep','Okt'],MKEY=['2026-05','2026-06','2026-07','2026-08','2026-09','2026-10'],CUR=5,IURAN=20000,TODAY='2026-10-18';
+/* Tingkatan resmi (pagarnusa.or.id): sabuk hijau dengan badge berwarna */
+const TINGKAT=[{n:'Badge Putih',s:'Santri',c:'#f3f4f6',t:'#374151'},{n:'Badge Kuning',s:'Santri',c:'#fde68a',t:'#78350f'},{n:'Badge Merah',s:'Santri',c:'#fecaca',t:'#7f1d1d'},{n:'Badge Biru',s:'Santri',c:'#bfdbfe',t:'#1e3a8a'},{n:'Badge Coklat',s:'Asisten Pelatih',c:'#d6b48c',t:'#4a2c0f'},{n:'Badge Hitam',s:'Pelatih',c:'#1f2937',t:'#ffffff'}];
+/* PAC = distrik di Kabupaten Mimika, Ranting = kampung/kelurahan (data contoh) */
+const PAC=[{id:'p1',nama:'Wania',ketua:'Ust. Ahmad Mubarok'},{id:'p2',nama:'Mimika Baru',ketua:'Muhammad Iqbal'},{id:'p3',nama:'Kuala Kencana',ketua:'Sutrisno'},{id:'p4',nama:'Iwaka',ketua:'Ahmad Fauzan'},{id:'p5',nama:'Mimika Timur',ketua:'Rudi Hartono'}];
+const RANTING=[{id:'r1',pac:'p1',nama:'Wonosari Jaya (SP4)',tempatFix:'Padepokan Soponyono, Masjid An-Nur SP4'},{id:'r2',pac:'p1',nama:'Kamoro Jaya (SP1)'},{id:'r3',pac:'p1',nama:'Kadun Jaya (Km 10)',tempatFix:'Halaman Masjid Al-Ikhlas Kadun Jaya'},{id:'r4',pac:'p2',nama:'Timika Jaya (SP2)',tempatFix:'Mushola Al-Muhajirin, Srikaya'},{id:'r5',pac:'p2',nama:'Kebun Sirih'},{id:'r6',pac:'p2',nama:'Sempan'},{id:'r7',pac:'p3',nama:'Karang Senang (SP3)',tempatFix:'PP Ulumul Qur\'an Hasyim Muzadi'},{id:'r8',pac:'p3',nama:'Mwuare (Km 14)',tempatFix:'PP Darussalam Mimika'},{id:'r9',pac:'p4',nama:'Limau Asri (SP5)',tempatFix:'Mushola Ar-Riyadhoh Jalur 5'},{id:'r10',pac:'p4',nama:'Naena Muktipura (SP6)'},{id:'r11',pac:'p5',nama:'Mapurujaya'},{id:'r12',pac:'p5',nama:'Pomako'}];
+const FM=['Ahmad','Muhammad','Rizky','Fajar','Dimas','Bagus','Andi','Yusuf','Ilham','Hendra','Agus','Wahyu','Arif','Rahmat','Hasan','Umar','Fikri','Reza','Galih','Iqbal','Naufal','Farhan'];
+const FF=['Siti','Nur','Aisyah','Dewi','Putri','Fitri','Rina','Laila','Zahra','Nabila','Salsa','Indah','Anisa','Melati','Khadijah','Aulia'];
+const LN=['Saputra','Pratama','Hidayat','Nugroho','Ramadhan','Wijaya','Kurniawan','Santoso','Maulana','Firmansyah','Setiawan','Kusuma','Fauzi','Syahputra','Hakim','Mubarok','Anwar','Rosyid'];
+const LNF=['Lestari','Rahmawati','Handayani','Wulandari','Safitri','Azzahra','Maharani','Kartika','Puspita','Amalia'];
+const TEMPAT=['Halaman Masjid Al-Ikhlas','Madrasah Nurul Huda','Lapangan Kampung','Aula Pondok Pesantren','Halaman Mushola Baiturrahman','Balai Kampung'];
+const HARI=[['Selasa & Jumat','16.00 – 18.00'],['Senin & Kamis','19.30 – 21.30'],['Rabu & Sabtu','16.00 – 18.00'],['Minggu & Rabu','07.00 – 09.00']];
+RANTING.forEach(r=>{r.pelatih=pick(FM)+' '+pick(LN);const h=pick(HARI);r.hari=h[0];r.jam=h[1];r.tempat=r.tempatFix||pick(TEMPAT)+' '+r.nama.replace(/ \(.*\)/,'')});
+const M=[];let NO=1;
+RANTING.forEach(r=>{const n=(r.id==='r1'?12:4)+Math.floor(rnd()*6);for(let i=0;i<n;i++){
+ const L=rnd()<.62,nama=(L?pick(FM):pick(FF))+' '+(L?pick(LN):pick(LNF));
+ const adult=rnd()<.14,lahir=adult?1984+Math.floor(rnd()*16):2006+Math.floor(rnd()*14);
+ const masuk=2018+Math.floor(rnd()*9);
+ let tk=Math.floor(rnd()*rnd()*6);tk=Math.min(tk,2026-masuk,5);
+ const sr=rnd(),status=sr<.86?'Aktif':sr<.94?'Cuti':'Nonaktif';
+ M.push({id:'PN-'+String(NO++).padStart(4,'0'),nama,jk:L?'L':'P',lahir,ranting:r.id,tingkat:tk,status,masuk,
+  hp:'08'+(1+Math.floor(rnd()*3))+String(Math.floor(rnd()*1e9)).padStart(9,'0'),
+  wali:lahir>2008?'Bpk. '+pick(FM)+' '+pick(LN):'—',hadir:status==='Aktif'?58+Math.floor(rnd()*42):0,
+  iuran:MKEY.map((k,j)=>status==='Aktif'&&rnd()<(j===CUR?.6:.9))})}});
+const ME=M.find(m=>m.status==='Aktif'&&m.ranting==='r1'&&m.lahir>2008)||M[0];
+ME.iuran=[true,true,true,true,false,false];ME.tingkat=Math.max(ME.tingkat,2);ME.masuk=Math.min(ME.masuk,2023);
+const PENGURUS=[['Ketua','H. Ahmad Syaifuddin'],['Wakil Ketua','Drs. Syamsul Arifin'],['Sekretaris','Nur Hidayat, S.Pd'],['Wakil Sekretaris','Siti Aminah'],['Bendahara','Hj. Fatimah Zahra'],['Wakil Bendahara','Rizal Maulana'],['Bid. Pembinaan & Pelatihan','Bambang Susilo'],['Bid. Organisasi & Kaderisasi','Ali Mustofa'],['Bid. Prestasi & Pertandingan','Dedi Kurniawan'],['Bid. Humas & Dakwah','Lukman Hakim']];
+let TID=1;const T=(tgl,ket,kat,pac,masuk,keluar)=>({id:'t'+(TID++),tgl,ket,kat,pac,masuk:masuk||0,keluar:keluar||0});
+let TRX=[];
+MKEY.forEach((k,i)=>{
+ TRX.push(T(k+'-10','Sewa tempat latihan gabungan','Operasional','',0,350000));
+ TRX.push(T(k+'-18','ATK & cetak administrasi','Sekretariat','',0,150000+Math.round(rnd()*12)*10000));
+ TRX.push(T(k+'-22','Konsumsi rapat pengurus','Rapat','',0,200000+Math.round(rnd()*10)*10000));
+ if(i>=2)PAC.forEach(p=>TRX.push(T(k+'-12','Transport & konsumsi latihan PAC '+p.nama,'Operasional',p.id,0,100000+Math.round(rnd()*5)*10000)));
+});
+TRX.push(T('2026-06-08','Donasi PCNU Mimika & simpatisan','Donasi','',2000000,0));
+TRX.push(T('2026-07-05','Sumbangan pengurus untuk pelantikan','Donasi','',2500000,0));
+TRX.push(T('2026-07-12','Pelantikan pengurus PAC se-Kabupaten Mimika','Kegiatan','',0,3650000));
+TRX.push(T('2026-08-08','Pendaftaran peserta Pengesahan Warga & UKT','Kegiatan','',3250000,0));
+TRX.push(T('2026-08-15','Konsumsi, tumpeng & sertifikat Pengesahan Warga','Kegiatan','',0,2100000));
+TRX.push(T('2026-09-14','Pembelian matras & perlengkapan padepokan','Inventaris','',0,2400000));
+TRX.push(T('2026-10-09','Pendaftaran atlet Kejuaraan IPSI Mimika','Kegiatan','',0,1200000));
+const PROGRAM=[
+{id:'pk1',nama:'Pelantikan Pengurus PAC se-Kabupaten Mimika',bidang:'Organisasi & Kaderisasi',pj:'Ali Mustofa',tgl:'2026-07-12',status:'Selesai',progress:100,anggaran:4000000,realisasi:3650000},
+{id:'pk2',nama:'Pengesahan Warga Baru & UKT Semester I',bidang:'Pembinaan & Pelatihan',pj:'Bambang Susilo',tgl:'2026-08-15',status:'Selesai',progress:100,anggaran:3000000,realisasi:2100000},
+{id:'pk3',nama:'Pengadaan Matras & Perlengkapan Padepokan',bidang:'Sekretariat',pj:'Nur Hidayat, S.Pd',tgl:'2026-09-14',status:'Selesai',progress:100,anggaran:2500000,realisasi:2400000},
+{id:'pk4',nama:'Latihan Gabungan Bulanan di Padepokan Soponyono',bidang:'Pembinaan & Pelatihan',pj:'Bambang Susilo',tgl:'2026-10-25',status:'Berjalan',progress:60,anggaran:4200000,realisasi:2100000},
+{id:'pk9',nama:'Apel & Kirab Hari Santri bersama PCNU Mimika',bidang:'Humas & Dakwah',pj:'Lukman Hakim',tgl:'2026-10-22',status:'Berjalan',progress:70,anggaran:1500000,realisasi:0},
+{id:'pk5',nama:'Kirim Atlet ke Kejuaraan Pencak Silat IPSI Mimika',bidang:'Prestasi & Pertandingan',pj:'Dedi Kurniawan',tgl:'2026-11-14',status:'Berjalan',progress:45,anggaran:8500000,realisasi:1200000},
+{id:'pk6',nama:'Diklat Pelatih & Asisten Pelatih',bidang:'Pembinaan & Pelatihan',pj:'Bambang Susilo',tgl:'2026-12-05',status:'Rencana',progress:10,anggaran:5000000,realisasi:0},
+{id:'pk7',nama:'Ujian Kenaikan Tingkat (UKT) Semester II',bidang:'Pembinaan & Pelatihan',pj:'Bambang Susilo',tgl:'2026-12-20',status:'Rencana',progress:15,anggaran:3200000,realisasi:0},
+{id:'pk8',nama:'Harlah ke-41 Pagar Nusa & Bakti Sosial',bidang:'Humas & Dakwah',pj:'Lukman Hakim',tgl:'2027-01-03',status:'Rencana',progress:5,anggaran:6000000,realisasi:0},
+{id:'pk10',nama:'Pawai Obor & Takbir Keliling Idul Fitri',bidang:'Humas & Dakwah',pj:'Lukman Hakim',tgl:'2027-03-09',status:'Rencana',progress:0,anggaran:2000000,realisasi:0}].sort((a,b)=>a.tgl.localeCompare(b.tgl));
+const SURAT={
+masuk:[{tgl:'2026-10-14',no:'045/PW-PN/X/2026',pihak:'PW Pagar Nusa Papua Tengah',perihal:'Undangan Rapat Koordinasi Wilayah',status:'Didisposisi'},{tgl:'2026-10-08',no:'112/PCNU-MMK/X/2026',pihak:'PCNU Mimika',perihal:'Undangan Apel Hari Santri 22 Oktober',status:'Selesai'},{tgl:'2026-09-29',no:'078/IPSI-MMK/IX/2026',pihak:'IPSI Kab. Mimika',perihal:'Undangan Kejuaraan Pencak Silat Kabupaten',status:'Diproses'},{tgl:'2026-09-12',no:'—',pihak:'PAC Iwaka',perihal:'Usulan pembentukan ranting baru',status:'Diproses'}],
+keluar:[{tgl:'2026-10-15',no:'021/PC-PN/MMK/X/2026',pihak:'IPSI Kab. Mimika',perihal:'Pendaftaran atlet kejuaraan',status:'Terkirim'},{tgl:'2026-10-02',no:'020/PC-PN/MMK/X/2026',pihak:'BNN Kab. Mimika',perihal:'Permohonan narasumber sosialisasi bahaya narkoba',status:'Menunggu balasan'},{tgl:'2026-09-20',no:'019/PC-PN/MMK/IX/2026',pihak:'Pelatih Ranting',perihal:'SK Penetapan Pelatih Ranting 2026',status:'Terkirim'},{tgl:'2026-08-30',no:'018/PC-PN/MMK/VIII/2026',pihak:'PW Pagar Nusa Papua Tengah',perihal:'Laporan Pengesahan Warga & UKT Semester I',status:'Terkirim'}],
+arsip:[{nama:'AD/ART Pagar Nusa',jenis:'Pedoman',tgl:'—'},{nama:'SK Susunan Pengurus PC 2025–2030',jenis:'SK',tgl:'2025-03-10'},{nama:'SK Pengurus PAC (6 berkas)',jenis:'SK',tgl:'2026-07-12'},{nama:'Laporan Pertanggungjawaban Semester I',jenis:'Laporan',tgl:'2026-07-30'},{nama:'Notulen Rapat Pleno Oktober',jenis:'Notulen',tgl:'2026-10-05'}]};
+const ABSEN_LOG=[{tgl:'2026-10-16',ranting:'r1',h:11,i:1,a:1},{tgl:'2026-10-13',ranting:'r1',h:12,i:0,a:1},{tgl:'2026-10-15',ranting:'r4',h:5,i:1,a:0},{tgl:'2026-10-14',ranting:'r9',h:4,i:0,a:1}];
+const BACKUP_LOG=[{w:'2026-10-10 21:14',oleh:'Sekretaris',jenis:'Manual',uk:'46 KB'},{w:'2026-10-01 20:02',oleh:'Sekretaris',jenis:'Manual',uk:'44 KB'},{w:'2026-09-15 19:40',oleh:'Bendahara',jenis:'Manual',uk:'41 KB'}];
+
+/* ================= ROLE & STATE ================= */
+const NAV={beranda:['Beranda','home'],struktur:['Struktur Organisasi','tree'],anggota:['Data Anggota','users'],keuangan:['Keuangan','wallet'],rencana:['Perencanaan','target'],absensi:['Jadwal & Absensi','check'],sekretariat:['Sekretariat','mail'],backup:['Backup Data','db'],saya:['Kartu & Profil','card'],jadwalku:['Jadwal Latihan','cal'],iuranku:['Iuran Saya','wallet']};
+const ROLES={
+ admin:{label:'Ketua / Sekretaris PC',nama:'Nur Hidayat, S.Pd',jab:'Sekretaris PC',nav:['beranda','struktur','anggota','keuangan','rencana','absensi','sekretariat','backup']},
+ bendahara:{label:'Bendahara',nama:'Hj. Fatimah Zahra',jab:'Bendahara PC',nav:['beranda','keuangan','rencana','backup']},
+ pelatih:{label:'Pelatih Ranting',nama:'',jab:'Pelatih Ranting Wonosari Jaya',nav:['beranda','anggota','absensi']},
+ siswa:{label:'Siswa / Orang Tua',nama:'',jab:'Anggota',nav:['saya','jadwalku','iuranku']}};
+ROLES.pelatih.nama=RANTING[0].pelatih;ROLES.siswa.nama=ME.nama;
+const S={role:'admin',scope:{type:'pc',id:''},page:'beranda',tab:{keu:'iuran',ren:'program',sek:'masuk'},q:'',fpac:'',ftk:'',fst:'',iuf:'semua',absen:{ranting:'r1',tgl:TODAY,marks:{}}};
+const R=id=>RANTING.find(r=>r.id===id),P=id=>PAC.find(p=>p.id===id);
+function scopeIds(){if(S.scope.type==='pc')return RANTING.map(r=>r.id);if(S.scope.type==='pac')return RANTING.filter(r=>r.pac===S.scope.id).map(r=>r.id);return [S.scope.id]}
+function scopeLabel(){if(S.scope.type==='pc')return 'Seluruh Cabang · Kab. Mimika';if(S.scope.type==='pac')return 'PAC '+P(S.scope.id).nama;const r=R(S.scope.id);return 'Ranting '+r.nama+' · PAC '+P(r.pac).nama}
+const inScope=()=>{const ids=scopeIds();return M.filter(m=>ids.includes(m.ranting))};
+function getTrx(){const auto=[];MKEY.forEach((k,i)=>PAC.forEach(p=>{const ids=RANTING.filter(r=>r.pac===p.id).map(r=>r.id);const n=M.filter(m=>ids.includes(m.ranting)&&m.iuran[i]).length;if(n)auto.push({id:'a'+k+p.id,tgl:k+'-05',ket:'Setoran iuran anggota PAC '+p.nama+' ('+n+' org)',kat:'Iuran',pac:p.id,masuk:n*IURAN,keluar:0,auto:1})}));return [...TRX,...auto].sort((a,b)=>b.tgl.localeCompare(a.tgl))}
+function trxScope(){const all=getTrx();if(S.scope.type==='pc')return all;const pid=S.scope.type==='pac'?S.scope.id:R(S.scope.id).pac;return all.filter(t=>t.pac===pid)}
+function kas(){const t=trxScope(),awal=S.scope.type==='pc'?3500000:300000;const masuk=t.reduce((s,x)=>s+x.masuk,0),keluar=t.reduce((s,x)=>s+x.keluar,0);const mm=MKEY.map(k=>{const f=t.filter(x=>x.tgl.startsWith(k));return{masuk:f.reduce((s,x)=>s+x.masuk,0),keluar:f.reduce((s,x)=>s+x.keluar,0)}});return{awal,masuk,keluar,saldo:awal+masuk-keluar,mm,t}}
+
+/* ================= KOMPONEN ================= */
+const kpi=(icon,tone,label,val,sub)=>`<div class="kpi"><div class="kpi-h"><span class="kl">${label}</span><span class="kt t-${tone}">${ic(icon,19)}</span></div><div class="kv">${val}</div><div class="ks">${sub}</div></div>`;
+const tk=i=>{const t=TINGKAT[i];return `<span class="belt" title="Sabuk hijau · ${t.n} · ${t.s}" style="background:${t.c};color:${t.t}">${t.n}</span>`};
+const PILL={Aktif:'green',Cuti:'gold',Nonaktif:'gray',Selesai:'green',Berjalan:'blue',Rencana:'gold',Lunas:'green','Belum':'red',Didisposisi:'blue',Diproses:'gold',Terkirim:'green','Menunggu balasan':'gold'};
+const pill=(s,t)=>`<span class="pill p-${PILL[s]||'gray'}">${t||s}</span>`;
+const nameCell=m=>`<div class="namecell"><div class="av">${ini(m.nama)}</div><div><b>${esc(m.nama)}</b><small>${m.id} · ${R(m.ranting).nama}</small></div></div>`;
+function donut(p,label){const r=52,c=2*Math.PI*r;return `<svg viewBox="0 0 140 140" width="136" height="136"><circle cx="70" cy="70" r="${r}" fill="none" stroke="#e8eeea" stroke-width="14"/><circle cx="70" cy="70" r="${r}" fill="none" stroke="#178050" stroke-width="14" stroke-linecap="round" stroke-dasharray="${(c*p/100).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 70 70)"/><text x="70" y="70" text-anchor="middle" font-size="26" font-weight="800" fill="#14211a">${p}%</text><text x="70" y="90" text-anchor="middle" font-size="11" fill="#62726a">${label}</text></svg>`}
+const bars=rows=>{const mx=Math.max(...rows.map(r=>r.v),1);return `<div class="bars">${rows.map(r=>`<div class="bar-row"><span class="bl" title="${esc(r.l)}">${esc(r.l)}</span><div class="bt"><div class="bf" style="width:${(r.v/mx*100).toFixed(1)}%"></div></div><b>${r.v}</b></div>`).join('')}</div>`};
+function lineChart(labels,series){const W=640,H=240,L=54,Rr=14,Tp=14,B=30;const mx=Math.max(1,...series.flatMap(s=>s.v))*1.15;const X=i=>L+(W-L-Rr)*i/(labels.length-1),Y=v=>Tp+(H-Tp-B)*(1-v/mx);let g='';
+ for(let k=0;k<=4;k++){const v=mx*k/4,y=Y(v);g+=`<line x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}" stroke="#e8eeea"/><text x="${L-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#7a8a82">${k?short(v):'0'}</text>`}
+ labels.forEach((l,i)=>g+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" font-size="11.5" fill="#7a8a82">${l}</text>`);
+ series.forEach((s,si)=>{const pts=s.v.map((v,i)=>[X(i),Y(v)]);const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  if(si===0)g+=`<path d="${d} L${X(labels.length-1)} ${Y(0)} L${X(0)} ${Y(0)} Z" fill="${s.c}" opacity=".09"/>`;
+  g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`;
+  pts.forEach((p,i)=>g+=`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="${s.c}" stroke-width="2.2"><title>${s.n} ${labels[i]}: ${rp(s.v[i])}</title></circle>`)});
+ return `<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="Grafik">${g}</svg>`}
+const tabs=(key,items)=>`<div class="tabs">${items.map(([v,l])=>`<button class="${S.tab[key]===v?'on':''}" data-a="tab" data-v="${key}:${v}">${l}</button>`).join('')}</div>`;
+const agendaItem=p=>{const [y,m,d]=p.tgl.split('-');return `<div class="ag"><div class="ag-d"><b>${+d}</b><small>${BLN[+m-1]}</small></div><div class="ag-t"><b>${esc(p.nama)}</b><span class="hint">PJ: ${esc(p.pj)}</span></div>${pill(p.status)}</div>`};
+
+/* ================= HALAMAN ================= */
+const PAGES={};
+PAGES.beranda=()=>{
+ const ms=inScope(),act=ms.filter(m=>m.status==='Aktif'),lun=act.filter(m=>m.iuran[CUR]).length,pct=act.length?Math.round(lun/act.length*100):0;
+ const k=kas(),done=PROGRAM.filter(p=>p.status==='Selesai').length,jalan=PROGRAM.filter(p=>p.status==='Berjalan').length;
+ const tung=act.reduce((s,m)=>s+m.iuran.filter(x=>!x).length,0),nT=act.filter(m=>m.iuran.some(x=>!x)).length;
+ const avgH=Math.round(act.reduce((s,m)=>s+m.hadir,0)/(act.length||1));
+ const upc=PROGRAM.filter(p=>p.tgl>=TODAY).slice(0,4);
+ if(S.role==='pelatih'){const r=R(S.scope.id);const belum=act.filter(m=>!m.iuran[CUR]);
+  return `<div class="stack"><div class="kpis">${kpi('users','g','Anggota aktif',act.length,ms.length+' terdaftar di ranting')}${kpi('check','b','Rata-rata kehadiran',avgH+'%','30 hari terakhir')}${kpi('wallet','gold','Iuran lunas Oktober',pct+'%',lun+' dari '+act.length+' anggota')}${kpi('clock','r','Jadwal latihan',r.hari,r.jam+' WIT')}</div>
+  <div class="g2"><div class="card"><div class="card-h"><div><h3>Absensi terakhir</h3><div class="hint">Ranting ${r.nama}</div></div><button class="btn sm" data-a="go" data-v="absensi">${ic('check',15)} Isi absensi</button></div>${absenLogTable(ABSEN_LOG.filter(a=>a.ranting===r.id))}</div>
+  <div class="card"><div class="card-h"><div><h3>Belum bayar iuran Oktober</h3><div class="hint">${belum.length} anggota</div></div></div><div class="mini-list">${belum.slice(0,7).map(m=>`<div><span>${esc(m.nama)}</span><b>${rp(IURAN)}</b></div>`).join('')||'<div class="empty">Semua sudah lunas</div>'}</div></div></div>
+  <div class="card"><div class="card-h"><div><h3>Kegiatan cabang mendatang</h3><div class="hint">Informasi dari pengurus cabang</div></div></div><div class="agenda">${upc.map(agendaItem).join('')}</div></div></div>`}
+ const groups=S.scope.type==='pc'?PAC.map(p=>({l:p.nama,v:M.filter(m=>R(m.ranting).pac===p.id&&m.status==='Aktif').length})):RANTING.filter(r=>scopeIds().includes(r.id)).map(r=>({l:r.nama,v:M.filter(m=>m.ranting===r.id&&m.status==='Aktif').length}));
+ const dist=TINGKAT.map((t,i)=>({t,n:act.filter(m=>m.tingkat===i).length}));
+ const first=S.role==='bendahara'
+  ?kpi('wallet','g','Saldo kas',short(k.saldo),S.scope.type==='pc'?'Kas gabungan cabang':'Kas PAC')+kpi('down','b','Pemasukan Okt',short(k.mm[CUR].masuk),'Iuran & lainnya')+kpi('up','gold','Pengeluaran Okt',short(k.mm[CUR].keluar),'Operasional & kegiatan')+kpi('alert','r','Tunggakan iuran',short(tung*IURAN),nT+' anggota belum lunas')
+  :kpi('users','g','Anggota aktif',act.length.toLocaleString('id-ID'),ms.length+' terdaftar · '+scopeIds().length+' ranting')+kpi('wallet','gold','Saldo kas',short(k.saldo),S.scope.type==='pc'?'Kas gabungan cabang':'Kas PAC')+kpi('target','b','Program kerja',done+'/'+PROGRAM.length+' selesai',jalan+' sedang berjalan')+kpi('alert','r','Tunggakan iuran',short(tung*IURAN),nT+' anggota belum lunas');
+ return `<div class="stack"><div class="kpis">${first}</div>
+ <div class="g2"><div class="card"><div class="card-h"><div><h3>Arus kas 6 bulan terakhir</h3><div class="hint">${scopeLabel()}</div></div><div class="legend"><span><i style="background:#178050"></i>Pemasukan</span><span><i style="background:#c99a1e"></i>Pengeluaran</span></div></div>${lineChart(MB,[{n:'Pemasukan',c:'#178050',v:k.mm.map(x=>x.masuk)},{n:'Pengeluaran',c:'#c99a1e',v:k.mm.map(x=>x.keluar)}])}</div>
+ <div class="card"><div class="card-h"><div><h3>Iuran bulan Oktober</h3><div class="hint">Rp20.000 / anggota aktif</div></div><button class="link" data-a="go" data-v="keuangan">Detail</button></div><div class="donut-wrap">${donut(pct,'lunas')}<div class="mini-list"><div><span>Sudah bayar</span><b>${lun} org</b></div><div><span>Belum bayar</span><b>${act.length-lun} org</b></div><div><span>Terkumpul</span><b>${rp(lun*IURAN)}</b></div><div><span>Target</span><b>${rp(act.length*IURAN)}</b></div></div></div></div></div>
+ <div class="g3"><div class="card"><div class="card-h"><div><h3>Anggota aktif per ${S.scope.type==='pc'?'PAC':'ranting'}</h3><div class="hint">Jumlah siswa yang masih berlatih</div></div></div>${bars(groups)}</div>
+ <div class="card"><div class="card-h"><div><h3>Sebaran tingkatan</h3><div class="hint">${act.length} anggota aktif</div></div></div><div class="stackbar">${dist.map(d=>`<span style="width:${d.n/(act.length||1)*100}%;background:${d.t.c}" title="${d.t.n}: ${d.n}"></span>`).join('')}</div><div class="lg-grid">${dist.map(d=>`<div><i style="background:${d.t.c}"></i>${d.t.n} <b>${d.n}</b></div>`).join('')}</div></div>
+ <div class="card"><div class="card-h"><div><h3>Agenda terdekat</h3><div class="hint">Dari program kerja</div></div><button class="link" data-a="go" data-v="rencana">Semua</button></div><div class="agenda">${upc.slice(0,3).map(agendaItem).join('')}</div></div></div></div>`};
+
+PAGES.struktur=()=>{
+ const lv=[['Pimpinan Wilayah','next'],['Pimpinan Cabang','on'],['PAC (Kecamatan)','on'],['Ranting (Desa)','on'],['Unit Latihan','next']];
+ return `<div class="stack"><div class="card"><div class="card-h"><div><h3>Jenjang organisasi di aplikasi</h3><div class="hint">Hijau = aktif sekarang · Garis emas = siap diaktifkan nanti tanpa mengubah data</div></div></div><div class="levels">${lv.map((l,i)=>(i?'<span class="arrow">›</span>':'')+`<span class="lv ${l[1]}">${l[0]}</span>`).join('')}</div></div>
+ <div class="card"><div class="card-h"><div><h3>${ORG.nama} ${ORG.wilayah}</h3><div class="hint">Masa khidmat ${ORG.periode} · ${ORG.induk}</div><div class="hint">${ic('pin',13)} ${ORG.padepokan}</div></div><button class="btn ghost sm" data-a="toast" data-v="Form edit pengurus tersedia di versi jadi">Ubah pengurus</button></div>
+ <div class="people">${PENGURUS.map((p,i)=>`<div class="person ${i===0?'lead':''}"><div class="av">${ini(p[1])}</div><div><small>${p[0]}</small><b>${esc(p[1])}</b></div></div>`).join('')}</div></div>
+ <div class="card"><div class="card-h"><div><h3>Pimpinan Anak Cabang & Ranting</h3><div class="hint">${PAC.length} PAC · ${RANTING.length} ranting · klik untuk buka</div></div><button class="btn sm" data-a="toast" data-v="Form tambah PAC/Ranting tersedia di versi jadi">${ic('plus',15)} PAC / Ranting</button></div>
+ ${PAC.map((p,i)=>{const rs=RANTING.filter(r=>r.pac===p.id);const n=M.filter(m=>rs.some(r=>r.id===m.ranting)&&m.status==='Aktif').length;
+  return `<details class="pac" ${i===0?'open':''}><summary><div class="pac-ic">${ic('flag',18)}</div><div class="pac-t"><b>PAC ${p.nama}</b><span class="hint">Ketua: ${p.ketua}</span></div><div class="pac-n"><div><b>${rs.length}</b>ranting</div><div><b>${n}</b>anggota aktif</div></div></summary>
+  <div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Ranting</th><th>Pelatih</th><th>Jadwal</th><th>Tempat</th><th class="num">Aktif</th></tr></thead><tbody>${rs.map(r=>`<tr><td data-l="Ranting"><b>${r.nama}</b></td><td data-l="Pelatih">${r.pelatih}</td><td data-l="Jadwal">${r.hari}, ${r.jam}</td><td data-l="Tempat">${r.tempat}</td><td data-l="Aktif" class="num">${M.filter(m=>m.ranting===r.id&&m.status==='Aktif').length}</td></tr>`).join('')}</tbody></table></div></details>`}).join('')}</div></div>`};
+
+function filteredMembers(){const q=S.q.toLowerCase();return inScope().filter(m=>(!q||m.nama.toLowerCase().includes(q)||m.id.toLowerCase().includes(q))&&(!S.fpac||R(m.ranting).pac===S.fpac)&&(S.ftk===''||m.tingkat===+S.ftk)&&(!S.fst||m.status===S.fst))}
+function anggotaList(){const f=filteredMembers(),show=f.slice(0,60);
+ return `<div class="flex" style="margin-bottom:10px"><span class="hint">Menampilkan ${show.length} dari ${f.length} anggota · L ${f.filter(m=>m.jk==='L').length} / P ${f.filter(m=>m.jk==='P').length}</span></div>
+ ${f.length?`<div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Anggota</th><th>Tingkatan</th><th>PAC</th><th>Status</th><th>Iuran Okt</th><th class="num">Hadir</th><th></th></tr></thead><tbody>${show.map(m=>`<tr><td class="nl">${nameCell(m)}</td><td data-l="Tingkatan">${tk(m.tingkat)}</td><td data-l="PAC">${P(R(m.ranting).pac).nama}</td><td data-l="Status">${pill(m.status)}</td><td data-l="Iuran Okt">${m.status!=='Aktif'?'<span class="hint">—</span>':m.iuran[CUR]?pill('Lunas'):pill('Belum','Belum')}</td><td data-l="Kehadiran" class="num">${m.status==='Aktif'?m.hadir+'%':'—'}</td><td data-l=""><button class="btn ghost sm" data-a="member" data-v="${m.id}">Detail</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Tidak ada anggota yang cocok dengan filter.</div>'}`}
+PAGES.anggota=()=>{const ms=inScope(),act=ms.filter(m=>m.status==='Aktif');
+ return `<div class="stack"><div class="kpis">${kpi('users','g','Total terdaftar',ms.length,'Seluruh status')}${kpi('check','b','Aktif berlatih',act.length,Math.round(act.length/(ms.length||1)*100)+'% dari total')}${kpi('plus','gold','Anggota baru 2026',ms.filter(m=>m.masuk===2026).length,'Masuk tahun ini')}${kpi('layers','r','Siap UKT Des',act.filter(m=>m.hadir>=80&&m.tingkat<5).length,'Kehadiran ≥ 80%')}</div>
+ <div class="card"><div class="toolbar" style="margin-bottom:14px"><div class="search">${ic('search',16)}<input placeholder="Cari nama atau nomor anggota…" value="${esc(S.q)}" data-c="q"></div>
+ ${S.scope.type==='pc'?`<select data-c="fpac"><option value="">Semua PAC</option>${PAC.map(p=>`<option value="${p.id}" ${S.fpac===p.id?'selected':''}>PAC ${p.nama}</option>`).join('')}</select>`:''}
+ <select data-c="ftk"><option value="">Semua tingkatan</option>${TINGKAT.map((t,i)=>`<option value="${i}" ${S.ftk===String(i)?'selected':''}>${t.n}</option>`).join('')}</select>
+ <select data-c="fst"><option value="">Semua status</option>${['Aktif','Cuti','Nonaktif'].map(s=>`<option ${S.fst===s?'selected':''}>${s}</option>`).join('')}</select>
+ <button class="btn ghost" data-a="exportCsv">${ic('down',16)} Ekspor</button><button class="btn" data-a="addMember">${ic('plus',16)} Tambah anggota</button></div><div id="alist">${anggotaList()}</div></div></div>`};
+
+PAGES.keuangan=()=>{const k=kas(),ms=inScope().filter(m=>m.status==='Aktif'),tung=ms.reduce((s,m)=>s+m.iuran.filter(x=>!x).length,0);
+ let body='';
+ if(S.tab.keu==='iuran'){
+  const rek=(S.scope.type==='pc'?PAC:[S.scope.type==='pac'?P(S.scope.id):P(R(S.scope.id).pac)]).map(p=>{const a=ms.filter(m=>R(m.ranting).pac===p.id),l=a.filter(m=>m.iuran[CUR]).length;return{p,a:a.length,l}});
+  const tot=rek.reduce((s,r)=>({a:s.a+r.a,l:s.l+r.l}),{a:0,l:0});
+  let list=ms.slice().sort((a,b)=>a.iuran.filter(Boolean).length-b.iuran.filter(Boolean).length);if(S.iuf==='belum')list=list.filter(m=>!m.iuran[CUR]);
+  body=`<div class="g2e" style="margin-bottom:16px"><div class="card"><div class="card-h"><div><h3>Rekap iuran Oktober per PAC</h3><div class="hint">Iuran Rp20.000 / bulan</div></div></div><div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>PAC</th><th class="num">Aktif</th><th class="num">Lunas</th><th class="num">Terkumpul</th><th class="num">%</th></tr></thead><tbody>${rek.map(r=>`<tr><td data-l="PAC"><b>${r.p.nama}</b></td><td data-l="Aktif" class="num">${r.a}</td><td data-l="Lunas" class="num">${r.l}</td><td data-l="Terkumpul" class="num">${rp(r.l*IURAN)}</td><td data-l="%" class="num">${r.a?Math.round(r.l/r.a*100):0}%</td></tr>`).join('')}<tr class="total"><td data-l="">TOTAL</td><td data-l="Aktif" class="num">${tot.a}</td><td data-l="Lunas" class="num">${tot.l}</td><td data-l="Terkumpul" class="num">${rp(tot.l*IURAN)}</td><td data-l="%" class="num">${tot.a?Math.round(tot.l/tot.a*100):0}%</td></tr></tbody></table></div></div>
+  <div class="card"><div class="card-h"><div><h3>Total tunggakan</h3><div class="hint">Akumulasi Mei – Oktober 2026</div></div></div><div class="kv" style="color:var(--red)">${rp(tung*IURAN)}</div><div class="ks">${tung} bulan tertunggak dari ${ms.filter(m=>m.iuran.some(x=>!x)).length} anggota</div><div style="margin-top:16px">${lineChart(MB,[{n:'Anggota lunas',c:'#178050',v:MKEY.map((x,i)=>ms.filter(m=>m.iuran[i]).length)}])}</div></div></div>
+  <div class="card"><div class="card-h"><div><h3>Status iuran per anggota</h3><div class="hint">Klik “Tandai lunas” saat anggota membayar</div></div><div class="tabs" style="margin:0"><button class="${S.iuf==='semua'?'on':''}" data-a="iuf" data-v="semua">Semua</button><button class="${S.iuf==='belum'?'on':''}" data-a="iuf" data-v="belum">Belum bayar Okt</button></div></div>
+  <div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Anggota</th><th>Mei – Okt</th><th>Okt</th><th class="num">Tunggakan</th><th></th></tr></thead><tbody>${list.slice(0,40).map(m=>`<tr><td class="nl">${nameCell(m)}</td><td data-l="6 bulan"><div class="dots">${m.iuran.map((x,i)=>`<span class="dot ${x?'y':'n'}" title="${MB[i]}">${MB[i][0]}</span>`).join('')}</div></td><td data-l="Oktober">${m.iuran[CUR]?pill('Lunas'):pill('Belum')}</td><td data-l="Tunggakan" class="num">${rp(m.iuran.filter(x=>!x).length*IURAN)}</td><td data-l="">${m.iuran[CUR]?'':`<button class="btn sm" data-a="lunas" data-v="${m.id}">Tandai lunas</button>`}</td></tr>`).join('')}</tbody></table></div></div>`}
+ if(S.tab.keu==='kas'){const t=k.t.slice(0,40),sm=t.reduce((s,x)=>({m:s.m+x.masuk,k:s.k+x.keluar}),{m:0,k:0});
+  body=`<div class="card"><div class="card-h"><div><h3>Buku kas</h3><div class="hint">${scopeLabel()} · setoran iuran dihitung otomatis dari data iuran</div></div><button class="btn" data-a="addTrx">${ic('plus',16)} Catat transaksi</button></div>
+  <div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Kategori</th><th>Lingkup</th><th class="num">Masuk</th><th class="num">Keluar</th></tr></thead><tbody>${t.map(x=>`<tr><td data-l="Tanggal">${fdate(x.tgl)}</td><td data-l="Keterangan">${esc(x.ket)}</td><td data-l="Kategori">${pill(x.kat,x.kat)}</td><td data-l="Lingkup">${x.pac?'PAC '+P(x.pac).nama:'Cabang'}</td><td data-l="Masuk" class="num in">${x.masuk?rp(x.masuk):'—'}</td><td data-l="Keluar" class="num out">${x.keluar?rp(x.keluar):'—'}</td></tr>`).join('')}<tr class="total"><td data-l="" colspan="4">TOTAL (${t.length} transaksi terakhir)</td><td data-l="Masuk" class="num">${rp(sm.m)}</td><td data-l="Keluar" class="num">${rp(sm.k)}</td></tr></tbody></table></div></div>`}
+ if(S.tab.keu==='laporan'){let s=k.awal;
+  body=`<div class="card"><div class="card-h"><div><h3>Laporan kas bulanan</h3><div class="hint">${scopeLabel()} · Mei – Oktober 2026</div></div><button class="btn ghost" data-a="toast" data-v="Cetak PDF laporan tersedia di versi jadi">${ic('file',16)} Cetak laporan</button></div>
+  <div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Bulan</th><th class="num">Pemasukan</th><th class="num">Pengeluaran</th><th class="num">Selisih</th><th class="num">Saldo akhir</th></tr></thead><tbody><tr><td data-l="Bulan"><i>Saldo awal</i></td><td data-l=""></td><td data-l=""></td><td data-l=""></td><td data-l="Saldo" class="num">${rp(k.awal)}</td></tr>${k.mm.map((x,i)=>{s+=x.masuk-x.keluar;const d=x.masuk-x.keluar;return `<tr><td data-l="Bulan"><b>${BLNF[4+i]} 2026</b></td><td data-l="Pemasukan" class="num in">${rp(x.masuk)}</td><td data-l="Pengeluaran" class="num out">${rp(x.keluar)}</td><td data-l="Selisih" class="num ${d<0?'out':'in'}">${d<0?'−':'+'}${rp(Math.abs(d)).replace('Rp ','Rp ')}</td><td data-l="Saldo" class="num">${rp(s)}</td></tr>`}).join('')}<tr class="total"><td data-l="">TOTAL</td><td data-l="Pemasukan" class="num">${rp(k.masuk)}</td><td data-l="Pengeluaran" class="num">${rp(k.keluar)}</td><td data-l="Selisih" class="num">${rp(k.masuk-k.keluar)}</td><td data-l="Saldo" class="num">${rp(k.saldo)}</td></tr></tbody></table></div></div>`}
+ return `<div class="stack"><div class="kpis">${kpi('wallet','g','Saldo kas',rp(k.saldo),S.scope.type==='pc'?'Gabungan cabang + PAC':'Kas PAC')}${kpi('down','b','Pemasukan Oktober',rp(k.mm[CUR].masuk),'Iuran & lainnya')}${kpi('up','gold','Pengeluaran Oktober',rp(k.mm[CUR].keluar),'Operasional & kegiatan')}${kpi('alert','r','Tunggakan iuran',rp(tung*IURAN),'Mei – Okt 2026')}</div>
+ <div>${tabs('keu',[['iuran','Iuran anggota'],['kas','Kas & transaksi'],['laporan','Laporan bulanan']])}${body}</div></div>`};
+
+PAGES.rencana=()=>{const an=PROGRAM.reduce((s,p)=>s+p.anggaran,0),re=PROGRAM.reduce((s,p)=>s+p.realisasi,0);let body='';
+ if(S.tab.ren==='program')body=`<div class="prog-grid">${PROGRAM.map(p=>`<div class="prog"><div class="flex"><span class="hint">${p.bidang}</span><span class="sp"></span>${pill(p.status)}</div><h4>${esc(p.nama)}</h4><div class="meta"><span>${ic('cal',14)}${fdate(p.tgl)}</span><span>${ic('user',14)}${esc(p.pj)}</span></div><div><div class="flex" style="justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span class="hint">Progres</span><b>${p.progress}%</b></div><div class="progress"><i style="width:${p.progress}%"></i></div></div><div class="money"><div><span class="hint">Anggaran</span><b>${rp(p.anggaran)}</b></div><div style="text-align:right"><span class="hint">Realisasi</span><b>${rp(p.realisasi)}</b></div></div></div>`).join('')}</div>`;
+ if(S.tab.ren==='kalender'){const g={};PROGRAM.slice().sort((a,b)=>a.tgl.localeCompare(b.tgl)).forEach(p=>{const k=p.tgl.slice(0,7);(g[k]=g[k]||[]).push(p)});
+  body=`<div class="card"><div class="card-h"><div><h3>Kalender kegiatan</h3><div class="hint">Juli 2026 – Januari 2027</div></div></div><div class="tl">${Object.entries(g).map(([k,ps])=>`<div class="tl-m">${BLNF[+k.slice(5)-1]} ${k.slice(0,4)}</div>${ps.map(p=>`<div class="tl-i ${p.status}"><div class="flex"><b>${esc(p.nama)}</b><span class="sp"></span>${pill(p.status)}</div><div class="meta" style="margin-top:4px"><span>${ic('cal',14)}${fdate(p.tgl)}</span><span>${ic('user',14)}${esc(p.pj)}</span></div></div>`).join('')}`).join('')}</div></div>`}
+ if(S.tab.ren==='rab')body=`<div class="card"><div class="card-h"><div><h3>Rencana Anggaran (RAB) vs Realisasi</h3><div class="hint">Tahun program 2026/2027</div></div></div><div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Program</th><th class="num">Anggaran</th><th class="num">Realisasi</th><th class="num">Sisa</th><th style="min-width:140px">Serapan</th></tr></thead><tbody>${PROGRAM.map(p=>{const pc=Math.round(p.realisasi/p.anggaran*100);return `<tr><td data-l="Program"><b>${esc(p.nama)}</b></td><td data-l="Anggaran" class="num">${rp(p.anggaran)}</td><td data-l="Realisasi" class="num">${rp(p.realisasi)}</td><td data-l="Sisa" class="num">${rp(p.anggaran-p.realisasi)}</td><td data-l="Serapan"><div class="flex" style="flex-wrap:nowrap"><div class="progress gold" style="flex:1;min-width:60px"><i style="width:${pc}%"></i></div><b style="font-size:12px">${pc}%</b></div></td></tr>`}).join('')}<tr class="total"><td data-l="">TOTAL</td><td data-l="Anggaran" class="num">${rp(an)}</td><td data-l="Realisasi" class="num">${rp(re)}</td><td data-l="Sisa" class="num">${rp(an-re)}</td><td data-l="Serapan">${Math.round(re/an*100)}%</td></tr></tbody></table></div></div>`;
+ return `<div class="stack"><div class="kpis">${kpi('target','g','Program kerja',PROGRAM.length,'Periode 2026/2027')}${kpi('clock','b','Sedang berjalan',PROGRAM.filter(p=>p.status==='Berjalan').length,'Perlu dipantau')}${kpi('check','gold','Selesai',PROGRAM.filter(p=>p.status==='Selesai').length,'Sudah dilaporkan')}${kpi('wallet','r','Serapan anggaran',Math.round(re/an*100)+'%',rp(re)+' dari '+short(an))}</div>
+ <div><div class="flex" style="justify-content:space-between">${tabs('ren',[['program','Program kerja'],['kalender','Kalender'],['rab','RAB & realisasi']])}<button class="btn" style="margin-bottom:16px" data-a="toast" data-v="Form tambah program tersedia di versi jadi">${ic('plus',16)} Program baru</button></div>${body}</div></div>`};
+
+function absenLogTable(list){return list.length?`<div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Tanggal</th><th>Ranting</th><th class="num">Hadir</th><th class="num">Izin</th><th class="num">Alpa</th></tr></thead><tbody>${list.map(a=>`<tr><td data-l="Tanggal">${fdate(a.tgl)}</td><td data-l="Ranting">${R(a.ranting).nama}</td><td data-l="Hadir" class="num in">${a.h}</td><td data-l="Izin" class="num">${a.i}</td><td data-l="Alpa" class="num out">${a.a}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Belum ada absensi.</div>'}
+PAGES.absensi=()=>{const ids=scopeIds();if(!ids.includes(S.absen.ranting)){S.absen.ranting=ids[0];S.absen.marks={}}
+ const r=R(S.absen.ranting),list=M.filter(m=>m.ranting===r.id&&m.status==='Aktif'),mk=S.absen.marks,c={H:0,I:0,A:0};list.forEach(m=>mk[m.id]&&c[mk[m.id]]++);
+ const jr=RANTING.filter(x=>ids.includes(x.id));
+ return `<div class="g2"><div class="card"><div class="card-h"><div><h3>Isi absensi latihan</h3><div class="hint">H = hadir · I = izin · A = alpa</div></div></div>
+ <div class="toolbar" style="margin-bottom:4px">${ids.length>1?`<select data-c="abr" style="flex:1">${jr.map(x=>`<option value="${x.id}" ${x.id===r.id?'selected':''}>Ranting ${x.nama} (PAC ${P(x.pac).nama})</option>`).join('')}</select>`:`<b style="flex:1">Ranting ${r.nama}</b>`}<input type="date" value="${S.absen.tgl}" data-c="abt"></div>
+ <div class="att-sum">${pill('Aktif','Hadir '+c.H)} ${pill('Rencana','Izin '+c.I)} ${pill('Belum','Alpa '+c.A)} <span class="pill p-gray">Belum diisi ${list.length-c.H-c.I-c.A}</span><span class="sp"></span><button class="btn ghost sm" data-a="absenAll">Semua hadir</button></div>
+ <div class="att">${list.map(m=>`<div class="att-row"><div class="namecell"><div class="av">${ini(m.nama)}</div><div><b>${esc(m.nama)}</b><small>${TINGKAT[m.tingkat].n}</small></div></div><div class="seg">${['H','I','A'].map(v=>`<button class="${v} ${mk[m.id]===v?'on':''}" data-a="mark" data-v="${m.id}|${v}">${v}</button>`).join('')}</div></div>`).join('')}</div>
+ <div class="mfoot"><button class="btn" data-a="saveAbsen">${ic('check',16)} Simpan absensi</button></div></div>
+ <div class="stack"><div class="card"><div class="card-h"><div><h3>Jadwal latihan</h3><div class="hint">${scopeLabel()}</div></div></div><div class="agenda">${jr.slice(0,6).map(x=>`<div class="ag"><div class="pac-ic">${ic('clock',18)}</div><div class="ag-t"><b>${x.nama} · ${x.hari}</b><span class="hint">${x.jam} WIT · ${x.tempat}</span></div></div>`).join('')}${jr.length>6?`<div class="hint">+${jr.length-6} ranting lainnya</div>`:''}</div></div>
+ <div class="card"><div class="card-h"><div><h3>Riwayat absensi</h3></div></div>${absenLogTable(ABSEN_LOG.filter(a=>ids.includes(a.ranting)).slice(0,6))}</div></div></div>`};
+
+PAGES.sekretariat=()=>{const t=S.tab.sek;let body;
+ if(t==='arsip')body=`<div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Dokumen</th><th>Jenis</th><th>Tanggal</th><th></th></tr></thead><tbody>${SURAT.arsip.map(a=>`<tr><td data-l="Dokumen"><div class="namecell"><div class="av" style="border-radius:10px">${ic('file',16)}</div><b>${a.nama}</b></div></td><td data-l="Jenis">${pill(a.jenis,a.jenis)}</td><td data-l="Tanggal">${fdate(a.tgl)}</td><td data-l=""><button class="btn ghost sm" data-a="toast" data-v="Pratinjau dokumen tersedia di versi jadi">Lihat</button></td></tr>`).join('')}</tbody></table></div>`;
+ else body=`<div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Tanggal</th><th>Nomor surat</th><th>${t==='masuk'?'Dari':'Kepada'}</th><th>Perihal</th><th>Status</th></tr></thead><tbody>${SURAT[t].map(s=>`<tr><td data-l="Tanggal">${fdate(s.tgl)}</td><td data-l="Nomor">${s.no}</td><td data-l="${t==='masuk'?'Dari':'Kepada'}"><b>${s.pihak}</b></td><td data-l="Perihal">${s.perihal}</td><td data-l="Status">${pill(s.status)}</td></tr>`).join('')}</tbody></table></div>`;
+ return `<div class="stack"><div class="kpis">${kpi('inbox','b','Surat masuk',SURAT.masuk.length,SURAT.masuk.filter(s=>s.status==='Diproses').length+' perlu ditindaklanjuti')}${kpi('send','g','Surat keluar',SURAT.keluar.length,'Nomor terakhir 021')}${kpi('file','gold','Arsip & SK',SURAT.arsip.length,'Dokumen tersimpan')}${kpi('cal','r','Rapat berikutnya','2 Nov','Rapat pleno bulanan')}</div>
+ <div class="card"><div class="flex" style="justify-content:space-between">${tabs('sek',[['masuk','Surat masuk'],['keluar','Surat keluar'],['arsip','Arsip & SK']])}<button class="btn" style="margin-bottom:16px" data-a="toast" data-v="Form surat + penomoran otomatis tersedia di versi jadi">${ic('plus',16)} ${t==='arsip'?'Unggah dokumen':'Catat surat'}</button></div>${body}</div></div>`};
+
+PAGES.backup=()=>`<div class="stack"><div class="g3">
+ <div class="card act-card"><span class="kt t-g">${ic('down',22)}</span><h3>Unduh backup lengkap</h3><div class="hint">Semua data induk (struktur, anggota, keuangan, program, surat) dalam satu file .json.</div><div><button class="btn" data-a="exportJson">${ic('down',16)} Unduh backup</button></div></div>
+ <div class="card act-card"><span class="kt t-gold">${ic('up',22)}</span><h3>Pulihkan data</h3><div class="hint">Kembalikan data dari file backup .json. Data saat ini akan diganti.</div><div><button class="btn gold" data-a="importJson">${ic('up',16)} Pilih file backup</button></div></div>
+ <div class="card act-card"><span class="kt t-b">${ic('file',22)}</span><h3>Ekspor ke Excel</h3><div class="hint">Daftar anggota dalam format CSV, bisa dibuka di Excel / Google Sheets.</div><div><button class="btn ghost" data-a="exportCsv">${ic('down',16)} Ekspor CSV</button></div></div></div>
+ <div class="card"><div class="card-h"><div><h3>Isi data saat ini</h3><div class="hint">Yang akan ikut dalam file backup</div></div></div><div class="countlist"><div><b>${PAC.length}</b><span>PAC</span></div><div><b>${RANTING.length}</b><span>Ranting</span></div><div><b>${PENGURUS.length}</b><span>Pengurus cabang</span></div><div><b>${M.length}</b><span>Anggota</span></div><div><b>${getTrx().length}</b><span>Transaksi kas</span></div><div><b>${PROGRAM.length}</b><span>Program kerja</span></div><div><b>${SURAT.masuk.length+SURAT.keluar.length}</b><span>Surat</span></div></div></div>
+ <div class="g2"><div class="card"><div class="card-h"><div><h3>Riwayat backup</h3></div></div><div class="tbl-wrap"><table class="tbl cardify"><thead><tr><th>Waktu</th><th>Oleh</th><th>Jenis</th><th class="num">Ukuran</th></tr></thead><tbody>${BACKUP_LOG.map(b=>`<tr><td data-l="Waktu">${b.w}</td><td data-l="Oleh">${b.oleh}</td><td data-l="Jenis">${pill(b.jenis==='Manual'?'Aktif':'Rencana',b.jenis)}</td><td data-l="Ukuran" class="num">${b.uk}</td></tr>`).join('')}</tbody></table></div></div>
+ <div class="note">${ic('info',18)}<div><b>Rencana di versi jadi:</b> data tersimpan di server (Supabase) dan otomatis dicadangkan setiap malam. Aplikasi tetap bisa dibuka saat sinyal lemah dan menyinkronkan data ketika online kembali.</div></div></div></div>`;
+
+PAGES.saya=()=>{const m=ME,r=R(m.ranting),p=P(r.pac);
+ return `<div class="g2"><div class="stack"><div class="idcard"><div class="idc-top"><div class="logo sm">${ic('shield',18)}</div><div><b>PAGAR NUSA</b><small>PC Kabupaten Mimika</small></div></div><div class="idc-body"><div class="av xl">${ini(m.nama)}</div><div><div class="idc-name">${esc(m.nama)}</div><div>No. Anggota ${m.id}</div><div>Ranting ${r.nama} · PAC ${p.nama}</div></div></div><div class="idc-foot"><span>${TINGKAT[m.tingkat].n} · ${TINGKAT[m.tingkat].s}</span><span>Anggota sejak ${m.masuk}</span></div></div>
+ <div class="card"><div class="card-h"><div><h3>Perjalanan tingkatan</h3><div class="hint">Sabuk hijau dengan badge · UKT berikutnya 20 Desember 2026</div></div></div><div class="steps">${TINGKAT.map((t,i)=>`<div class="step ${i<=m.tingkat?'done':''} ${i===m.tingkat?'cur':''}"><i style="${i<=m.tingkat?`background:${t.c};color:${t.t}`:''}">${i+1}</i>${t.n.replace('Badge ','')}</div>`).join('')}</div></div></div>
+ <div class="stack"><div class="card"><div class="card-h"><div><h3>Data diri</h3></div></div><div class="dl"><div><span>Jenis kelamin</span><b>${m.jk==='L'?'Laki-laki':'Perempuan'}</b></div><div><span>Tahun lahir</span><b>${m.lahir}</b></div><div><span>Orang tua / wali</span><b>${m.wali}</b></div><div><span>No. HP</span><b>${m.hp}</b></div><div><span>Pelatih</span><b>${r.pelatih}</b></div><div><span>Kehadiran</span><b>${m.hadir}%</b></div></div></div>
+ <div class="card"><div class="card-h"><div><h3>Pengumuman</h3></div></div><div class="agenda">${PROGRAM.filter(x=>x.tgl>=TODAY).slice(0,3).map(agendaItem).join('')}</div></div></div></div>`};
+PAGES.jadwalku=()=>{const r=R(ME.ranting);return `<div class="g2"><div class="card"><div class="card-h"><div><h3>Latihan rutin</h3><div class="hint">Ranting ${r.nama}</div></div></div><div class="kv">${r.hari}</div><div class="ks" style="font-size:14px">${r.jam} WIT</div><div class="meta" style="margin-top:12px"><span>${ic('pin',15)}${r.tempat}</span><span>${ic('user',15)}Pelatih: ${r.pelatih}</span></div>
+ <h4 style="margin:22px 0 8px;font-size:13px;color:var(--muted)">KEHADIRAN SAYA</h4><div class="progress" style="height:12px"><i style="width:${ME.hadir}%"></i></div><div class="ks">${ME.hadir}% kehadiran · minimal 80% untuk ikut UKT</div></div>
+ <div class="card"><div class="card-h"><div><h3>Kegiatan cabang</h3></div></div><div class="agenda">${PROGRAM.filter(x=>x.tgl>=TODAY).map(agendaItem).join('')}</div></div></div>`};
+PAGES.iuranku=()=>{const t=ME.iuran.filter(x=>!x).length;return `<div class="stack"><div class="kpis">${kpi('alert','r','Tunggakan',rp(t*IURAN),t+' bulan belum dibayar')}${kpi('check','g','Sudah dibayar',ME.iuran.filter(Boolean).length+' bulan','Mei – Oktober 2026')}${kpi('wallet','gold','Iuran per bulan',rp(IURAN),'Ditetapkan cabang')}</div>
+ <div class="card"><div class="card-h"><div><h3>Riwayat iuran 2026</h3></div></div><div class="months">${ME.iuran.map((x,i)=>`<div class="mo ${x?'y':'n'}">${MB[i]}<small>${x?'Lunas':'Belum'}</small></div>`).join('')}</div>
+ <div class="note" style="margin-top:16px">${ic('info',18)}<div>Pembayaran iuran melalui pelatih ranting <b>${R(ME.ranting).pelatih}</b> setiap latihan. Status di sini diperbarui oleh bendahara.</div></div></div></div>`};
+
+/* ================= RENDER ================= */
+const TITLE={beranda:'Beranda',struktur:'Struktur Organisasi',anggota:'Data Anggota',keuangan:'Keuangan',rencana:'Perencanaan & Program Kerja',absensi:'Jadwal & Absensi',sekretariat:'Sekretariat',backup:'Backup & Pemulihan Data',saya:'Kartu & Profil Saya',jadwalku:'Jadwal Latihan',iuranku:'Iuran Saya'};
+function scopeOptions(){const cur=S.scope.type==='pc'?'pc':S.scope.type+':'+S.scope.id;let o=`<option value="pc" ${cur==='pc'?'selected':''}>Seluruh Cabang</option>`;PAC.forEach(p=>{o+=`<option value="pac:${p.id}" ${cur==='pac:'+p.id?'selected':''}>PAC ${p.nama}</option>`;RANTING.filter(r=>r.pac===p.id).forEach(r=>o+=`<option value="ranting:${r.id}" ${cur==='ranting:'+r.id?'selected':''}>   ↳ Ranting ${r.nama}</option>`)});return o}
+function render(){const ro=ROLES[S.role];if(!ro.nav.includes(S.page))S.page=ro.nav[0];if(S.role==='pelatih')S.scope={type:'ranting',id:'r1'};
+ const navBtns=(cls)=>ro.nav.map(id=>`<button class="${S.page===id?'on':''}" data-a="go" data-v="${id}">${ic(NAV[id][1],cls?20:18)}<span>${cls&&NAV[id][0].length>12?NAV[id][0].split(' ')[0]:NAV[id][0]}</span></button>`).join('');
+ $('#nav').innerHTML=`<div class="grp">Menu ${ro.label}</div>`+navBtns();
+ $('#bnav').innerHTML=navBtns(1);
+ $('#sidefoot').innerHTML=`Masuk sebagai<div class="who"><div class="av">${ini(ro.nama)}</div><div><b>${esc(ro.nama)}</b>${ro.jab}</div></div>`;
+ const showScope=S.role==='admin'||S.role==='bendahara';
+ $('#top').innerHTML=`<div><h1>${TITLE[S.page]}</h1><div class="sub">${S.role==='siswa'?'Halo, '+esc(ME.nama):scopeLabel()} · Minggu, 18 Oktober 2026</div></div><div class="ctl">${showScope&&S.page!=='struktur'&&S.page!=='backup'&&S.page!=='sekretariat'&&S.page!=='rencana'?`<div class="sel"><label>Lingkup data</label><select data-c="scope">${scopeOptions()}</select></div>`:''}<div class="sel"><label>Lihat sebagai (demo)</label><select data-c="role">${Object.entries(ROLES).map(([k,r])=>`<option value="${k}" ${k===S.role?'selected':''}>${r.label}</option>`).join('')}</select></div></div>`;
+ $('#content').innerHTML=PAGES[S.page]();}
+
+/* ================= AKSI ================= */
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400)}
+function openModal(h){$('#modal').innerHTML=h;$('#ov').classList.add('show')}
+function closeModal(){$('#ov').classList.remove('show')}
+function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+const fld=(l,inner,full)=>`<div class="fld ${full?'full':''}"><label>${l}</label>${inner}</div>`;
+const ACT={
+ go:v=>{S.page=v;render();window.scrollTo(0,0)},
+ tab:v=>{const [k,t]=v.split(':');S.tab[k]=t;render()},
+ iuf:v=>{S.iuf=v;render()},
+ toast:v=>toast(v),close:()=>closeModal(),
+ member:id=>{const m=M.find(x=>x.id===id),r=R(m.ranting),p=P(r.pac);
+  openModal(`<div class="mh"><div class="av lg">${ini(m.nama)}</div><div><h2>${esc(m.nama)}</h2><div class="hint">${m.id} · ${m.jk==='L'?'Laki-laki':'Perempuan'} · ${2026-m.lahir} tahun</div><div class="flex" style="margin-top:6px;gap:6px">${tk(m.tingkat)} ${pill(m.status)}</div></div><button class="x" data-a="close">${ic('x')}</button></div>
+  <div class="dl"><div><span>Ranting</span><b>${r.nama}</b></div><div><span>PAC</span><b>${p.nama}</b></div><div><span>Tahun masuk</span><b>${m.masuk}</b></div><div><span>No. HP</span><b>${m.hp}</b></div><div><span>Orang tua / wali</span><b>${m.wali}</b></div><div><span>Kehadiran</span><b>${m.status==='Aktif'?m.hadir+'%':'—'}</b></div></div>
+  <h4>Iuran Mei – Oktober 2026</h4><div class="months">${m.iuran.map((x,i)=>`<div class="mo ${x?'y':'n'}">${MB[i]}<small>${x?'Lunas':'Belum'}</small></div>`).join('')}</div>
+  <h4>Riwayat tingkatan</h4><div class="rh"><div><i></i>${m.masuk} · Terdaftar sebagai anggota (${TINGKAT[0].n})</div>${TINGKAT.slice(1,m.tingkat+1).map((t,i)=>`<div><i></i>${Math.min(2026,m.masuk+i+1)} · Lulus UKT ke ${t.n}</div>`).join('')}</div>
+  <div class="mfoot"><button class="btn ghost" data-a="toast" data-v="Edit data tersedia di versi jadi">Edit data</button><button class="btn" data-a="toast" data-v="Kartu anggota siap dicetak (contoh)">${ic('card',16)} Cetak kartu</button></div>`)},
+ addMember:()=>{const ids=scopeIds();openModal(`<div class="mh"><div><h2>Tambah anggota</h2><div class="hint">Nomor anggota dibuat otomatis</div></div><button class="x" data-a="close">${ic('x')}</button></div>
+  <form id="fm" class="fg" onsubmit="return false">${fld('Nama lengkap','<input name="nama" placeholder="mis. Ahmad Saputra">',1)}${fld('Jenis kelamin','<select name="jk"><option value="L">Laki-laki</option><option value="P">Perempuan</option></select>')}${fld('Tahun lahir','<input name="lahir" type="number" value="2012">')}
+  ${fld('Ranting',`<select name="ranting">${RANTING.filter(r=>ids.includes(r.id)).map(r=>`<option value="${r.id}">${r.nama} (PAC ${P(r.pac).nama})</option>`).join('')}</select>`)}${fld('Tingkatan',`<select name="tingkat">${TINGKAT.map((t,i)=>`<option value="${i}">${t.n}</option>`).join('')}</select>`)}${fld('No. HP','<input name="hp" placeholder="08…">')}${fld('Orang tua / wali','<input name="wali" placeholder="Opsional">')}</form>
+  <div class="mfoot"><button class="btn ghost" data-a="close">Batal</button><button class="btn" data-a="saveMember">Simpan anggota</button></div>`)},
+ saveMember:()=>{const f=new FormData($('#fm')),nama=(f.get('nama')||'').trim();if(!nama)return toast('Nama wajib diisi');
+  M.unshift({id:'PN-'+String(NO++).padStart(4,'0'),nama,jk:f.get('jk'),lahir:+f.get('lahir')||2012,ranting:f.get('ranting'),tingkat:+f.get('tingkat'),status:'Aktif',masuk:2026,hp:f.get('hp')||'—',wali:f.get('wali')||'—',hadir:100,iuran:[false,false,false,false,false,false]});
+  closeModal();S.q='';S.fpac='';S.ftk='';S.fst='';toast('Anggota “'+nama+'” tersimpan');render()},
+ lunas:id=>{const m=M.find(x=>x.id===id);m.iuran[CUR]=true;toast('Iuran Oktober '+m.nama+' lunas · kas bertambah '+rp(IURAN));render()},
+ addTrx:()=>openModal(`<div class="mh"><div><h2>Catat transaksi kas</h2><div class="hint">Setoran iuran tidak perlu dicatat di sini (otomatis)</div></div><button class="x" data-a="close">${ic('x')}</button></div>
+  <form id="ft" class="fg" onsubmit="return false">${fld('Jenis','<select name="jenis"><option value="keluar">Pengeluaran</option><option value="masuk">Pemasukan</option></select>')}${fld('Tanggal',`<input name="tgl" type="date" value="${TODAY}">`)}${fld('Keterangan','<input name="ket" placeholder="mis. Beli perlengkapan P3K">',1)}${fld('Kategori','<select name="kat"><option>Operasional</option><option>Kegiatan</option><option>Sekretariat</option><option>Inventaris</option><option>Donasi</option><option>Rapat</option></select>')}${fld('Nominal (Rp)','<input name="nom" type="number" placeholder="150000">')}${fld('Lingkup',`<select name="pac"><option value="">Kas Cabang</option>${PAC.map(p=>`<option value="${p.id}">PAC ${p.nama}</option>`).join('')}</select>`,1)}</form>
+  <div class="mfoot"><button class="btn ghost" data-a="close">Batal</button><button class="btn" data-a="saveTrx">Simpan</button></div>`),
+ saveTrx:()=>{const f=new FormData($('#ft')),n=+f.get('nom'),ket=(f.get('ket')||'').trim();if(!ket||!n)return toast('Keterangan dan nominal wajib diisi');const tgl=f.get('tgl')||TODAY;
+  TRX.push(T(tgl,ket,f.get('kat'),f.get('pac'),f.get('jenis')==='masuk'?n:0,f.get('jenis')==='keluar'?n:0));closeModal();S.tab.keu='kas';toast('Transaksi tersimpan');render()},
+ mark:v=>{const [id,s]=v.split('|');S.absen.marks[id]=S.absen.marks[id]===s?undefined:s;render()},
+ absenAll:()=>{M.filter(m=>m.ranting===S.absen.ranting&&m.status==='Aktif').forEach(m=>S.absen.marks[m.id]='H');render()},
+ saveAbsen:()=>{const list=M.filter(m=>m.ranting===S.absen.ranting&&m.status==='Aktif'),c={H:0,I:0,A:0};list.forEach(m=>S.absen.marks[m.id]&&c[S.absen.marks[m.id]]++);
+  if(c.H+c.I+c.A<list.length)return toast('Masih ada '+(list.length-c.H-c.I-c.A)+' anggota belum diisi');
+  ABSEN_LOG.unshift({tgl:S.absen.tgl,ranting:S.absen.ranting,h:c.H,i:c.I,a:c.A});S.absen.marks={};toast('Absensi tersimpan · '+c.H+' hadir');render()},
+ exportJson:()=>{const data={aplikasi:'SIPN Pagar Nusa',versi:1,dibuat:new Date().toISOString(),organisasi:ORG,pengurus:PENGURUS,pac:PAC,ranting:RANTING,tingkatan:TINGKAT,anggota:M,transaksi:TRX,program:PROGRAM,surat:SURAT,absensi:ABSEN_LOG};
+  const txt=JSON.stringify(data,null,1);download('backup-sipn-'+TODAY+'.json',txt,'application/json');BACKUP_LOG.unshift({w:new Date().toLocaleString('sv-SE').slice(0,16),oleh:ROLES[S.role].jab,jenis:'Manual',uk:Math.round(txt.length/1024)+' KB'});toast('File backup diunduh');render()},
+ importJson:()=>$('#imp').click(),
+ exportCsv:()=>{const rows=[['No Anggota','Nama','JK','Tahun Lahir','Ranting','PAC','Tingkatan','Status','Tahun Masuk','No HP','Wali']].concat(inScope().map(m=>[m.id,m.nama,m.jk,m.lahir,R(m.ranting).nama,P(R(m.ranting).pac).nama,TINGKAT[m.tingkat].n,m.status,m.masuk,m.hp,m.wali]));
+  download('anggota-pagarnusa-'+TODAY+'.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv');toast('Daftar anggota diekspor')}
+};
+document.addEventListener('click',e=>{if(e.target.id==='ov')return closeModal();const el=e.target.closest('[data-a]');if(!el)return;ACT[el.dataset.a]&&ACT[el.dataset.a](el.dataset.v,el)});
+document.addEventListener('input',e=>{const c=e.target.dataset.c;if(c==='q'){S.q=e.target.value;$('#alist').innerHTML=anggotaList()}});
+document.addEventListener('change',e=>{const c=e.target.dataset.c;if(!c||c==='q')return;const v=e.target.value;
+ if(c==='role'){S.role=v;S.scope={type:'pc',id:''};S.fpac='';S.page=ROLES[v].nav[0]}
+ else if(c==='scope'){if(v==='pc')S.scope={type:'pc',id:''};else{const [t,id]=v.split(':');S.scope={type:t,id}}S.fpac=''}
+ else if(c==='abr'){S.absen.ranting=v;S.absen.marks={}}else if(c==='abt'){S.absen.tgl=v}else S[c]=v;render()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+$('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);if(!Array.isArray(d.anggota))throw 0;M.splice(0,M.length,...d.anggota);if(Array.isArray(d.transaksi))TRX=d.transaksi;if(Array.isArray(d.program))PROGRAM.splice(0,PROGRAM.length,...d.program);toast('Data dipulihkan: '+M.length+' anggota');render()}catch(err){toast('File tidak valid / bukan backup SIPN')}};rd.readAsText(f);e.target.value=''});
+$('#lg1').innerHTML=ic('shield',22);$('#lg2').innerHTML=ic('shield',17);
+render();
+</script>
+</body>
+</html>
